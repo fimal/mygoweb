@@ -1,14 +1,12 @@
 FROM golang
 
-ENV APP_NAME myproject
-ENV PORT 8080
+WORKDIR /app
+COPY go.* ./
+RUN go get github.com/kavu/go_reuseport
+RUN go mod download
 
-COPY . /go/src/${APP_NAME}
-WORKDIR /go/src/${APP_NAME}
+COPY *.go ./
+RUN go build -o /main.go
 
-RUN go get ./
-RUN go build -o ${APP_NAME}
-
-CMD ./${APP_NAME}
-
-EXPOSE ${PORT}
+EXPOSE 8080
+CMD ./main.go
