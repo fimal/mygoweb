@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-ipv6
+  namespace: radware
+spec:
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - image: docker.io/fimal/mygoweb
+        imagePullPolicy: Always
+        name: rater
+        ports:
+        - containerPort: 8080
+          name: test
+          protocol: TCP
+      - args:
+        - -c
+        - while true; do ping localhost; sleep 60;done
+        command:
+        - /bin/bash
+        image: nicolaka/netshoot
+        imagePullPolicy: Always
+        name: nettest
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
